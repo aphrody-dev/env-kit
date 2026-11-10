@@ -1,0 +1,21 @@
+{
+  "name": "@aphrody/env-kit",
+  "version": "1.0.0",
+  "description": "Zero-dependency cross-language environment sharing, secret redaction, and editor/agent sync toolkit for C:/src",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "bin": {
+    "env-kit": "./src/cli.ts"
+  },
+  "scripts": {
+    "check": "bun check",
+    "fmt": "bun fmt",
+    "fmt:check": "bun fmt --check",
+    "test": "bun test",
+    "doctor": "bun run src/cli.ts doctor"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
