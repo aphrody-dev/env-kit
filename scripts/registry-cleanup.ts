@@ -64,7 +64,11 @@ function isStubNpmPackage(name: string, description = ""): boolean {
   return false;
 }
 
-function isStubCrate(name: string, maxVersionSize = 0, description = ""): boolean {
+function isStubCrate(
+  name: string,
+  maxVersionSize = 0,
+  description = "",
+): boolean {
   if (CANONICAL_CRATES_KEEP.has(name)) return false;
   if (name.startsWith("yolo-")) return true;
   if (maxVersionSize > 0 && maxVersionSize < 4096) return true;
@@ -77,11 +81,19 @@ async function main() {
 
   if (existsSync(NPM_REPORT)) {
     const raw = JSON.parse(readFileSync(NPM_REPORT, "utf8"));
-    const items: Array<{ name: string; version: string; description?: string }> = Array.isArray(raw)
+    const items: Array<{
+      name: string;
+      version: string;
+      description?: string;
+    }> = Array.isArray(raw)
       ? raw
-      : raw.packages ?? raw.objects?.map((o: any) => o.package) ?? [];
-    const deprecateList = items.filter((p) => isStubNpmPackage(p.name, p.description));
-    console.log(`[npm] audited=${items.length} | canonical_keep=${CANONICAL_NPM_KEEP.size} | deprecate_candidates=${deprecateList.length}`);
+      : (raw.packages ?? raw.objects?.map((o: any) => o.package) ?? []);
+    const deprecateList = items.filter((p) =>
+      isStubNpmPackage(p.name, p.description),
+    );
+    console.log(
+      `[npm] audited=${items.length} | canonical_keep=${CANONICAL_NPM_KEEP.size} | deprecate_candidates=${deprecateList.length}`,
+    );
 
     if (execute) {
       for (const pkg of deprecateList) {
@@ -95,20 +107,33 @@ async function main() {
       }
     } else {
       for (const pkg of deprecateList.slice(0, 12)) {
-        console.log(`  [dry-run] npm deprecate "${pkg.name}@*" "Consolidated into @aphrody/*"`);
+        console.log(
+          `  [dry-run] npm deprecate "${pkg.name}@*" "Consolidated into @aphrody/*"`,
+        );
       }
       if (deprecateList.length > 12) {
-        console.log(`  ... and ${deprecateList.length - 12} additional stub packages`);
+        console.log(
+          `  ... and ${deprecateList.length - 12} additional stub packages`,
+        );
       }
     }
   }
 
   if (existsSync(CRATES_REPORT)) {
     const raw = JSON.parse(readFileSync(CRATES_REPORT, "utf8"));
-    const crates: Array<{ name: string; max_version?: string; newest_version?: string; description?: string; size?: number }> =
-      Array.isArray(raw) ? raw : raw.crates ?? [];
-    const yankList = crates.filter((c) => isStubCrate(c.name, c.size ?? 0, c.description ?? ""));
-    console.log(`[crates.io] audited=${crates.length} | canonical_keep=${CANONICAL_CRATES_KEEP.size} | yank_candidates=${yankList.length}`);
+    const crates: Array<{
+      name: string;
+      max_version?: string;
+      newest_version?: string;
+      description?: string;
+      size?: number;
+    }> = Array.isArray(raw) ? raw : (raw.crates ?? []);
+    const yankList = crates.filter((c) =>
+      isStubCrate(c.name, c.size ?? 0, c.description ?? ""),
+    );
+    console.log(
+      `[crates.io] audited=${crates.length} | canonical_keep=${CANONICAL_CRATES_KEEP.size} | yank_candidates=${yankList.length}`,
+    );
 
     if (execute) {
       for (const c of yankList) {

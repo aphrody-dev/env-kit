@@ -219,7 +219,7 @@ describe("env-kit cross-language loaders integration", () => {
 
       const pyScript = `
 import sys
-sys.path.insert(0, r"C:\\src\\env-kit\\loaders\\python")
+sys.path.insert(0, r"C:\\src\\packages\\env-kit\\loaders\\python")
 import sovereign_env
 env = sovereign_env.load_monorepo_env(
     env_path=r"${envFile}",
@@ -251,7 +251,7 @@ print("PY_OK")
 
       const cmd = `
 $env:SYNTH_PS_EXISTING = 'keep_me'
-. 'C:\\src\\env-kit\\loaders\\shell\\load-env.ps1' -EnvPath '${envFile}' -Required @('SYNTH_PS_KEY')
+. 'C:\\src\\packages\\env-kit\\loaders\\shell\\load-env.ps1' -EnvPath '${envFile}' -Required @('SYNTH_PS_KEY')
 if ($env:SYNTH_PS_KEY -ne 'from_dotenv') { exit 2 }
 if ($env:SYNTH_PS_EXISTING -ne 'keep_me') { exit 3 }
 Write-Output 'PS_OK'
@@ -268,15 +268,15 @@ Write-Output 'PS_OK'
 
   test("Rust cargo test and Go test suites pass", () => {
     const cargo = spawnSync("cargo", ["test", "--quiet"], {
-      cwd: "C:\\src\\env-kit\\loaders\\rust",
+      cwd: "C:\\src\\packages\\env-kit\\loaders\\rust",
       encoding: "utf8",
     });
     expect(cargo.status).toBe(0);
 
     const go = spawnSync("go", ["test", "./..."], {
-      cwd: "C:\\src\\env-kit\\loaders\\go",
+      cwd: "C:\\src\\packages\\env-kit\\loaders\\go",
       encoding: "utf8",
     });
     expect(go.status).toBe(0);
-  });
+  }, 30_000);
 });

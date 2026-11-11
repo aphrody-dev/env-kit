@@ -160,7 +160,7 @@ export function syncAllEditorConfigs(
   };
   ocMcp.figma = {
     type: "local",
-    command: ["bunx", "-y", "figma-developer-mcp", "--stdio"],
+    command: ["C:/Users/aphro/.local/bin/ai-os.exe", "mcp-stdio"],
     enabled: true,
     environment: {
       FIGMA_API_KEY: "{env:FIGMA_ACCESS_TOKEN}",
@@ -169,7 +169,7 @@ export function syncAllEditorConfigs(
   };
   ocMcp.github = ocMcp.github ?? {
     type: "local",
-    command: ["bunx", "-y", "@modelcontextprotocol/server-github"],
+    command: ["C:/Users/aphro/.local/bin/ai-os.exe", "mcp-stdio"],
     enabled: true,
     environment: {
       GITHUB_PERSONAL_ACCESS_TOKEN: "{env:GITHUB_TOKEN}",
@@ -340,8 +340,8 @@ export function syncAllEditorConfigs(
     source: "custom",
     enabled: true,
     command: {
-      path: "bun",
-      args: ["run", "C:/src/env-kit/src/cli.ts", "exec", "--", "r3d-mcp"],
+      path: "C:/Users/aphro/.local/bin/env-kit.exe",
+      args: ["exec", "--", "r3d-mcp"],
       env: {},
     },
   };
@@ -349,16 +349,8 @@ export function syncAllEditorConfigs(
     source: "custom",
     enabled: true,
     command: {
-      path: "bunx",
-      args: [
-        "-y",
-        "@aphrody/env-kit",
-        "exec",
-        "--",
-        "bunx",
-        "-y",
-        "@modelcontextprotocol/server-github",
-      ],
+      path: "C:/Users/aphro/.local/bin/env-kit.exe",
+      args: ["exec", "--", "C:/Users/aphro/.local/bin/ai-os.exe", "mcp-stdio"],
       env: {},
     },
   };
@@ -366,17 +358,8 @@ export function syncAllEditorConfigs(
     source: "custom",
     enabled: true,
     command: {
-      path: "bun",
-      args: [
-        "run",
-        "C:/src/env-kit/src/cli.ts",
-        "exec",
-        "--",
-        "bunx",
-        "-y",
-        "figma-developer-mcp",
-        "--stdio",
-      ],
+      path: "C:/Users/aphro/.local/bin/env-kit.exe",
+      args: ["exec", "--", "C:/Users/aphro/.local/bin/ai-os.exe", "mcp-stdio"],
       env: {},
     },
   };

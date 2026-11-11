@@ -487,3 +487,5 @@ export function upsertEnvFileKey(
 
   writeFileSync(envPath, updated.join("\n"), "utf8");
 }
+
+export * from "./accounts";

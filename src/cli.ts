@@ -5,6 +5,14 @@ import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import { syncAllEditorConfigs } from "./editors";
 import {
+  buildAphrodyIamBindingsPlan,
+  formatAccountsStatusReport,
+  formatIamBindingsPlan,
+  initGcloudConfigurations,
+  inspectAccountsStatus,
+  switchGcloudPrincipal,
+} from "./accounts";
+import {
   DEFAULT_MONOREPO_ENV_PATH,
   exportForCloudflareDevVars,
   exportForVercelEnv,
@@ -224,6 +232,10 @@ function printHelp(): void {
 
 Usage:
   env-kit doctor                       Audit masked status of all credentials, ACLs, and editors
+  env-kit accounts status [--json]     Inspect 3-principal gcloud configs, rclone, and org provider surfaces
+  env-kit accounts init-gcloud         Idempotently initialize ai-yoyo, owner-yohan, org-contact, sa-automation
+  env-kit accounts switch <principal>  Activate gcloud configuration for <ai|owner|org|sa>
+  env-kit accounts iam-bindings        Print idempotent GCP IAM policy bindings for project aphrody (#468000409790)
   env-kit set <KEY> <VALUE>            Set key in C:/src/.env + Windows User Env + sync editors
   env-kit nuget-set-key <API_KEY>      Set NUGET_API_KEY and register with dotnet nuget config
   env-kit sync-editors                 Re-wire OpenCode, Zed, and Pi provider/MCP configs
@@ -232,6 +244,63 @@ Usage:
   env-kit vercel-env [projectDir]      Preview masked Vercel env summary (or write .env.local with --write)
   env-kit exec -- <cmd> [args...]      Execute command with C:/src/.env injected into child process
 `);
+}
+
+function runAccountsCommand(envPath: string, args: readonly string[]): number {
+  const sub = args[0] ?? "status";
+
+  if (sub === "status") {
+    const asJson = args.includes("--json");
+    const report = inspectAccountsStatus({ envPath });
+    if (asJson) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      console.log(formatAccountsStatusReport(report));
+    }
+    return 0;
+  }
+
+  if (sub === "init-gcloud") {
+    const res = initGcloudConfigurations();
+    console.log(
+      `[env-kit] Initialized gcloud configurations (${res.updatedConfigs.join(", ")}) [created=${res.createdConfigs.length}, active=${res.preservedActiveConfig ?? "NONE"}].`,
+    );
+    return 0;
+  }
+
+  if (sub === "switch") {
+    const target = args[1];
+    if (!target) {
+      console.error("Usage: env-kit accounts switch <ai|owner|org|sa>");
+      return 1;
+    }
+    const res = switchGcloudPrincipal(target);
+    console.log(
+      `[env-kit] Activated gcloud configuration "${res.principal.gcloudConfig}" (${res.principal.email}, project=${res.principal.project}).`,
+    );
+    if (!res.oauthCached && res.loginHint) {
+      console.log(
+        `[env-kit] OAuth token not cached yet for ${res.principal.email}. Run:\n  ${res.loginHint}`,
+      );
+    }
+    return 0;
+  }
+
+  if (sub === "iam-bindings") {
+    const asJson = args.includes("--json");
+    const plan = buildAphrodyIamBindingsPlan();
+    if (asJson) {
+      console.log(JSON.stringify(plan, null, 2));
+    } else {
+      console.log(formatIamBindingsPlan(plan));
+    }
+    return 0;
+  }
+
+  console.error(
+    `Unknown accounts subcommand: ${sub}. Expected one of: status, init-gcloud, switch, iam-bindings`,
+  );
+  return 1;
 }
 
 export async function main(
@@ -247,6 +316,10 @@ export async function main(
 
   if (cmd === "doctor") {
     return runDoctor(envPath);
+  }
+
+  if (cmd === "accounts") {
+    return runAccountsCommand(envPath, argv.slice(1));
   }
 
   if (cmd === "set") {
