@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "sovereign-env"
+name = "aphrody-env"
 version = "0.1.0"

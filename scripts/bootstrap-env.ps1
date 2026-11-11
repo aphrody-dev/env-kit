@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 <#
 .SYNOPSIS
   Harvests existing User/Machine/CLI credentials securely in-memory, populates C:\src\.env,

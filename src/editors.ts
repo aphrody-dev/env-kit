@@ -176,9 +176,7 @@ export function syncAllEditorConfigs(
   const existingAnthropic = asRecord(ocProviders.anthropic);
   ocProviders.anthropic = {
     ...existingAnthropic,
-    name:
-      (existingAnthropic.name as string | undefined) ??
-      "Anthropic Claude (service account yolo)",
+    name: (existingAnthropic.name as string | undefined) ?? "Anthropic Claude",
     apiKey: "{env:ANTHROPIC_API_KEY}",
     options: {
       ...asRecord(existingAnthropic.options),
