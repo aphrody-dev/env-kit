@@ -140,6 +140,11 @@ export function syncAllEditorConfigs(
   oc.doctrine = oc.doctrine ?? "No Human In The Loop (NHITL / ZHITL)";
 
   const ocMcp = asRecord(oc.mcp);
+  ocMcp.ai_os = {
+    type: "local",
+    command: ["C:/Users/aphro/.local/bin/ai-os.exe", "mcp-stdio"],
+    enabled: true,
+  };
   ocMcp.cloudflare = ocMcp.cloudflare ?? {
     type: "remote",
     url: "https://mcp.cloudflare.com/mcp",
@@ -322,6 +327,15 @@ export function syncAllEditorConfigs(
   };
 
   const zedCtx = asRecord(zed.context_servers);
+  zedCtx["ai-os"] = {
+    source: "custom",
+    enabled: true,
+    command: {
+      path: "C:/Users/aphro/.local/bin/ai-os.exe",
+      args: ["mcp-stdio"],
+      env: {},
+    },
+  };
   zedCtx["native-hardware-cuda"] = zedCtx["native-hardware-cuda"] ?? {
     source: "custom",
     enabled: true,
