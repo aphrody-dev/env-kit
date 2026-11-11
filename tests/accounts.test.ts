@@ -6,7 +6,7 @@ import {
   formatBindZoneFile,
   generateCloudflareMailDnsRecords,
   syncCloudflareMailDns,
-} from "../../../infra/mail/dns/cloudflare-mail-dns";
+} from "../../../infra/mesh-vn/src/cloudflare-mail-dns";
 import {
   APHRODY_GCP_PROJECT_ID,
   APHRODY_GCP_PROJECT_NUMBER,
